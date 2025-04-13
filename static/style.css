@@ -1,78 +1,109 @@
+/* Base styling */
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f0f2f5;
+  color: #333;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Container */
 .container {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
+/* Sidebar styling */
 .sidebar {
   width: 300px;
   background-color: #fff;
   padding: 20px;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  position: relative;
+  transition: transform 0.3s ease-in-out;
 }
 
+/* Sidebar Title */
 .sidebar h2 {
   margin-top: 0;
+  font-size: 1.6em;
+  color: #333;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
+/* Input & Button Sections */
 .user-section, .connection-section {
   margin-bottom: 20px;
 }
 
 .user-section input, .connection-section input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
+  padding: 12px;
+  margin-bottom: 15px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
+  background-color: #f7f7f7;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
 }
 
-.user-section button,
-.connection-section button {
+.user-section input:focus, .connection-section input:focus {
+  border-color: #4a90e2;
+  outline: none;
+}
+
+.user-section button, .connection-section button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background-color: #4a90e2;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-size: 16px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.user-section button:hover,
-.connection-section button:hover {
+.user-section button:hover, .connection-section button:hover {
   background-color: #357abd;
+  transform: scale(1.05);
 }
 
+/* Chat section */
 .chat-section {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 20px;
   background-color: #e9ebee;
+  overflow: hidden;
 }
 
+/* Message List */
 .messages {
   flex: 1;
   overflow-y: auto;
   padding-right: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
+/* Individual Messages */
 .message {
   max-width: 70%;
-  margin-bottom: 10px;
-  padding: 10px 15px;
-  border-radius: 10px;
+  padding: 12px 16px;
+  border-radius: 12px;
   word-wrap: break-word;
-  line-height: 1.4;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  line-height: 1.6;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-size: 14px;
+  position: relative;
+  transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
 .message.sent {
@@ -85,36 +116,42 @@ body {
   align-self: flex-start;
 }
 
+/* Input Section */
 .input-section {
   display: flex;
-  gap: 10px;
+  gap: 12px;
+  padding: 10px 0;
+  background-color: #f7f7f7;
+  border-top: 1px solid #ccc;
 }
 
 .input-section textarea {
   flex: 1;
   resize: none;
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
 }
 
 .input-section button {
-  padding: 10px 15px;
+  padding: 12px 18px;
   background-color: #4a90e2;
   color: white;
   font-weight: bold;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .input-section button:hover {
   background-color: #357abd;
+  transform: scale(1.05);
 }
 
-/* Scrollbar styling */
+/* Scrollbar Styling */
 .messages::-webkit-scrollbar {
   width: 8px;
 }
@@ -126,3 +163,113 @@ body {
   background: transparent;
 }
 
+/* Dark Mode */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .sidebar {
+  background-color: #1e1e1e;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.6);
+}
+
+body.dark-mode .user-section input,
+body.dark-mode .connection-section input,
+body.dark-mode .input-section textarea {
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  border: 1px solid #444;
+}
+
+body.dark-mode .user-section button,
+body.dark-mode .connection-section button,
+body.dark-mode .input-section button {
+  background-color: #333;
+  color: #fff;
+}
+
+body.dark-mode .user-section button:hover,
+body.dark-mode .connection-section button:hover,
+body.dark-mode .input-section button:hover {
+  background-color: #555;
+}
+
+body.dark-mode .chat-section {
+  background-color: #181818;
+}
+
+body.dark-mode .message.sent {
+  background-color: #2e7d32;
+}
+
+body.dark-mode .message.received {
+  background-color: #2a2a2a;
+}
+
+body.dark-mode .messages::-webkit-scrollbar-thumb {
+  background-color: #444;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  margin-top: 20px;
+}
+
+.theme-toggle button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.theme-toggle button:hover {
+  background-color: #357abd;
+  transform: scale(1.05);
+}
+
+/* Dark Mode Button */
+body.dark-mode .theme-toggle button {
+  background-color: #444;
+  color: #fff;
+}
+
+body.dark-mode .theme-toggle button:hover {
+  background-color: #666;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    box-shadow: none;
+    transform: translateY(-100%);
+  }
+  .sidebar.open {
+    transform: translateY(0);
+  }
+  .chat-section {
+    padding: 15px;
+  }
+  .messages {
+    padding-right: 0;
+  }
+  .input-section {
+    padding: 12px 0;
+  }
+  .input-section textarea {
+    padding: 12px;
+    font-size: 16px;
+  }
+  .input-section button {
+    padding: 12px 18px;
+  }
+}
