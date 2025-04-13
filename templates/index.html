@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>P2P Chat</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-peer@9.11.1/simplepeer.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <h2>P2P Chat</h2>
+      <div class="user-section">
+        <input id="name" placeholder="Enter your display name" />
+        <button onclick="register()">Register</button>
+        <p>Your ID: <span id="myId">Not registered</span></p>
+      </div>
+      <div class="connection-section">
+        <input id="targetId" placeholder="Enter Peer ID" />
+        <button onclick="connect()">Connect</button>
+        <p>Peer Name: <span id="peerName">N/A</span></p>
+        <p>Status: <span id="status">Disconnected</span></p>
+      </div>
+    </div>
+    <div class="chat-section">
+      <div id="messages" class="messages"></div>
+      <div class="input-section">
+        <textarea id="messageInput" placeholder="Type your message..."></textarea>
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const socket = io();
+    let myId = '';
+    let peerId = '';
+    let conn = null;
+    let peerName = '';
+
+    function register() {
+      const name = document.getElementById('name').value.trim();
+      if (name) {
+        socket.emit('register', { name });
+      }
+    }
+
+    socket.on('registered', data => {
+      myId = data.id;
+      document.getElementById('myId').innerText = myId;
+    });
+
+    socket.on('error', data => {
+      alert(data.message || 'An error occurred');
+    });
+
+    function connect() {
+      peerId = document.getElementById('targetId').value.trim();
+      if (!peerId) return;
+      startPeer(true);
+    }
+
+    function startPeer(initiator) {
+      conn = new SimplePeer({ initiator, trickle: false });
+
+      conn.on('signal', data => {
+        socket.emit('signal', {
+          from: myId,
+          target: peerId,
+          signal: data
+        });
+      });
+
+      conn.on('connect', () => {
+        document.getElementById('status').innerText = 'Connected';
+      });
+
+      conn.on('data', data => {
+        const msg = document.createElement('div');
+        msg.className = 'message received';
+        msg.innerHTML = `<p><strong>${peerName || 'Peer'}:</strong> ${data}</p>`;
+        document.getElementById('messages').appendChild(msg);
+        document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+      });
+    }
+
+    socket.on('signal', data => {
+      peerId = data.from;
+      if (!conn) startPeer(false);
+      conn.signal(data.signal);
+      socket.emit('get_peer_name', { target: peerId });
+    });
+
+    socket.on('peer_name', data => {
+      peerName = data.name;
+      document.getElementById('peerName').innerText = peerName;
+    });
+
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      if (text && conn) {
+        conn.send(text);
+        const msg = document.createElement('div');
+        msg.className = 'message sent';
+        msg.innerHTML = `<p><strong>You:</strong> ${text}</p>`;
+        document.getElementById('messages').appendChild(msg);
+        document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+        input.value = '';
+      }
+    }
+
+    window.addEventListener("beforeunload", () => {
+      socket.disconnect();
+    });
+
+    setInterval(() => {
+      socket.emit('heartbeat');
+    }, 15000);
+  </script>
+</body>
+</html>
